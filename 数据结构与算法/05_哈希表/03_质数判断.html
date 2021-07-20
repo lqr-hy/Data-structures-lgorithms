@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script>
+  function isPrime(num) {
+    // let x = parseInt(Math.sqrt(num))
+    for (let i = 2; i <= Math.sqrt(num); i++) {
+      if (num % i === 0) {
+        return false
+      }
+    }
+    return true
+  }
+
+  console.log(isPrime(3))
+  console.log(isPrime(13))
+  console.log(isPrime(12))
+  console.log(isPrime(21))
+
+</script>
+</body>
+</html>

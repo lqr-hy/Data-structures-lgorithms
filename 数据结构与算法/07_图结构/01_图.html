@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script src="dict.js"></script>
+<script src="queue.js"></script>
+<script>
+  /**
+   * 图的搜索
+   * BFS 基于队列。入队列的顶点先被探索
+   * DFS 基于栈或使用递归，通过将顶点存入栈，顶点是沿着路径被探索的，存在新的相邻节点就去访问
+   */
+    // 图封装
+  class Graph {
+    //
+    constructor() {
+      // 属性 顶点（数组） 边（字典）
+      this.vertexes = [] // 定点
+      this.edges = new Dict() // 边
+    }
+
+    // 添加顶点
+    addVertex(v) {
+      this.vertexes.push(v)
+      this.edges.set(v, [])
+    }
+
+    // 添加边
+    addEdge(v1, v2) {
+      this.edges.get(v1).push(v2)
+      this.edges.get(v2).push(v1)
+    }
+
+    toString() {
+      // 保存字符串
+      let result = ''
+      // 遍历所有的顶点
+      for (let i = 0; i < this.vertexes.length; i++) {
+        // 拼接顶点
+        result += this.vertexes[i] + '--->'
+        // 获取当前顶点的边
+        let edge = this.edges.get(this.vertexes[i])
+        for (let j = 0; j < edge.length; j++) {
+          result += edge[j] + ' '
+        }
+        result += '\n'
+      }
+
+      return result
+    }
+
+    // 初始化所有节点的颜色
+    initColor() {
+      let color = []
+      for (let i = 0; i < this.vertexes.length; i++) {
+        color[this.vertexes[i]] = 'white'
+      }
+      return color
+    }
+
+    // 广度优先算法 bfs
+    /**
+     * 广度优先算法
+     * @param initV 初始化跟节点
+     * @param handler  处理的方式
+     */
+    bfs(initV, handler) {
+      // 初始化颜色
+      let colors = this.initColor()
+
+      // 创建队列
+      let queue = new Queue()
+
+      // 将初次访问的节点放入队列
+      queue.enqueue(initV)
+
+      // 循环取出所有列队的元素
+      while (!queue.isEmpty()) {
+        // 取出队列中的顶点
+        let vertex = queue.dequeue()
+
+        // 获取顶点相邻的边
+        let vertexBord = this.edges.get(vertex)
+
+        // 修改被访问了的顶点的颜色
+        colors[vertex] = 'gray'
+
+        for (let i = 0; i < vertexBord.length; i++) {
+          let nextBord = vertexBord[i]
+          // 判断颜色，以便区分相同的被访问过
+          if (colors[nextBord] === 'white') {
+            // 修改访问过的颜色
+            colors[nextBord] = 'gray'
+            // 加入队列中
+            queue.enqueue(nextBord)
+          }
+        }
+
+        // 访问顶点
+        handler(vertex)
+
+        // 修改探索之后的颜色
+        colors[vertex] = 'black'
+      }
+    }
+
+    /**
+     * 深度优先算法
+     * @param initV 初始化顶点
+     * @param handler 处理的方式
+     */
+    dfs(initV, handler) {
+      // 初始化颜色
+      let color = this.initColor()
+
+      // 递归调用访问的顶点
+      this.dfsVisit(initV, color, handler)
+    }
+
+    /**
+     * 递归dfs算法
+     * @param v 顶点
+     * @param color 颜色
+     * @param handler 处理方式
+     */
+    dfsVisit(v, color, handler) {
+      // 访问了就修改颜色
+      color[v] = 'gray'
+
+      // 处理顶点
+      handler(v)
+
+      // 获取相邻节点
+      let vList = this.edges.get(v)
+      // 访问相邻的顶点
+      for (let i = 0; i < vList.length; i++) {
+        // 获取每个顶点
+        let e = vList[i]
+        if (color[e] === 'white') {
+          this.dfsVisit(e, color, handler)
+        }
+      }
+
+      // 修改被探索过的颜色
+      color[v] = 'black'
+    }
+  }
+
+  const graph = new Graph()
+  // 添加顶点
+  let myVertexes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+  for (let i = 0; i < myVertexes.length; i++) {
+    graph.addVertex(myVertexes[i])
+  }
+  // 添加边
+  graph.addEdge('A', 'B')
+  graph.addEdge('A', 'C')
+  graph.addEdge('A', 'D')
+  graph.addEdge('C', 'D')
+  graph.addEdge('C', 'G')
+  graph.addEdge('D', 'G')
+  graph.addEdge('D', 'H')
+  graph.addEdge('B', 'E')
+  graph.addEdge('B', 'F')
+  graph.addEdge('E', 'I')
+
+  console.log(graph)
+
+  let result = ''
+  graph.bfs(graph.vertexes[0], (v) => {
+    result += v + ' '
+  })
+  console.log(result)
+
+  result = ''
+  graph.dfs(graph.vertexes[0], (v)=>result += v + " ")
+  console.log(result)
+  alert(graph)
+
+
+  const dist = new Dict()
+  dist.set('A', 1)
+  dist.set('B', 2)
+  dist.set('C', 3)
+  console.log(dist)
+</script>
+</body>
+</html>

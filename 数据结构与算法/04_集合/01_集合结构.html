@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+  // 集合  里面的元素是无序的，并且 不能重复
+  class Set {
+    constructor() {
+      this.item = {}
+    }
+
+    // 添加属性
+    add(value) {
+      if (this.has(value)) {
+        return false
+      }
+      this.item[value] = value
+      return true
+    }
+
+    // 是否有这个属性
+    has(value) {
+      // 查询当前对象中是否有这个属性
+      return this.item.hasOwnProperty(value)
+    }
+
+    // remove 移除属性
+    remove(value) {
+      if (this.has(value)) {
+        delete this.item[value]
+        return true
+      }
+      return false
+    }
+
+    // 清空集合
+    clear() {
+      this.item = {}
+      return true
+    }
+
+    //集合长度
+    size() {
+      return Object.keys(this.item).length
+    }
+
+    // 集合所有的值
+    values() {
+      return Object.keys(this.item)
+    }
+
+    // 并集 所有数但相同的会被删除
+    union(otherSet) {
+      let newValues = new Set()
+      let values = this.values()
+      for (let i = 0; i < values.length; i++) {
+        newValues.add(values[i])
+      }
+
+      values = otherSet.values()
+      for (let i = 0; i < values.length; i++) {
+        newValues.add(values[i])
+      }
+      return newValues
+    }
+
+
+    // 交集 相同的数
+    inter(otherSet) {
+      let newValues = new Set()
+      let values = this.values()
+      for (let i = 0; i < values.length; i++) {
+        let item = values[i]
+        if (otherSet.has(item)) {
+          newValues.add(item)
+        }
+      }
+      return newValues
+    }
+
+    // 差集 A 集合中 B集合没有的数
+    diff(otherSet) {
+      let newValues = new Set()
+      let values = this.values()
+      for (let i = 0; i < values.length; i++) {
+        let item = values[i]
+        if (!otherSet.has(item)) {
+          newValues.add(item)
+        }
+      }
+      return newValues
+    }
+
+    // 子集 A 集合是否是在 B 中全部包含
+    subset(otherSet) {
+      let values = this.values()
+      for (let i = 0; i < values.length; i++) {
+        let item = values[i]
+        if(!otherSet.has(item)){
+          return false
+        }
+      }
+      return true
+    }
+  }
+
+  const set = new Set()
+  set.add('1')
+  set.add('2')
+  set.add('3')
+  set.add('4')
+  // console.log(set)
+  // console.log(set.values())
+  // console.log(set.size())
+  // console.log(set.has('1'))
+  // set.remove('1')
+  // console.log(set.size())
+  // console.log(set.values())
+  const set2 = new Set()
+  set2.add('1')
+  set2.add('2')
+  set2.add('3')
+  set2.add('5')
+  // console.log(set.union(set2))
+  // console.log(set.inter(set2))
+  // console.log(set.diff(set2))
+  console.log(set.subset(set2))
+</script>
+</body>
+</html>

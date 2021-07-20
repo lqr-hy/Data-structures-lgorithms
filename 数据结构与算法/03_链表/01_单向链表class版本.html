@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script>
+  class Node {
+    constructor(data) {
+      this.data = data
+      this.next = null
+    }
+  }
+
+  class LinkedList {
+    constructor() {
+      this.header = null
+      this.length = 0
+    }
+
+    // 追加的方法
+    append(data) {
+      const newNode = new Node(data)
+
+      // 首先判断链表有没有数据
+      if (this.length === 0) {
+        this.header = newNode
+      } else {
+        // 获取当前数据
+        let current = this.header
+
+        // 循环直到最后一个节点为null的时候 添加新的节点
+        while (current.next) {
+          current = current.next
+        }
+
+        // 新节点指向当前节点的指针
+        current.next = newNode
+      }
+      this.length++
+    }
+
+    // 转换字符串
+    toString() {
+      // 获取第一个节点
+      let current = this.header
+      let result = ''
+      // 根据next值判断是否循环
+      while (current.next) {
+        result += current.data + ' '
+        current = current.next
+      }
+      return result
+    }
+
+    /**
+     * 插入某个位置
+     * @param position 要插入的位置
+     * @param data 要插入的数据
+     */
+    insert(position, data) {
+      // 边界处理
+      if (position < 0 || position > this.length) return false
+
+      // 插入新的节点
+      let newNode = new Node(data)
+      // 判断插入的位置 0
+      if (position === 0) {
+        // 新节点指向之前节点
+        newNode.next = this.header
+        // 头部变成新的节点
+        this.header = newNode
+      } else {
+        // 获取第一个节点
+        let current = this.header
+        // 获取当前节点的上一个节点
+        let previous = null
+        // 记录插入的位置
+        let index = 0
+        // 当插入的位置等于 index 时找到被插入的节点
+        while (index++ < position) {
+          previous = current
+          current = current.next
+        }
+        // 数量加一
+        this.length++
+        // 上一个节点指向插入的newNode
+        previous.next = newNode
+        // 新节点指向当前被插入的节点
+        newNode.next = current
+        return true
+      }
+    }
+
+    /**
+     * 获取指定索引的数据
+     * @param position 需要查询的索引
+     */
+    get(position) {
+      // 边界处理
+      if (position < 0 || position > this.length) return false
+
+      // 获取当前节点
+      let current = this.header
+      // 记录获取的索引数据
+      let index = 0
+      while (index++ < position) {
+        current = current.next
+      }
+      return current.data
+    }
+
+    /**
+     * 根据输入的数据获取指定索引
+     * @param data
+     */
+    indexOf(data) {
+      // 获取当前数据
+      let current = this.header
+      // 记录数据位置
+      let index = 0
+      while (current) {
+        if (current.data === data) {
+          return index
+        }
+        current = current.next
+        index++
+      }
+      // 没有查到就返回-1
+      return -1
+    }
+
+    /**
+     * 更新链表数据
+     * @param position 需要更新的位置
+     * @param data 更新的数据
+     */
+    update(position, data) {
+      // 边界处理
+      if (position < 0 || position >= this.length) return false
+      // 获取当前节点数据
+      let current = this.header
+      // 记录查到的到索引
+      let index = 0
+      // while循环过滤 position 和 index 不同的
+      while (index++ < position) {
+        current = current.next
+      }
+      // 当前节点等于新输入的数据
+      current.data = data
+    }
+
+    /**
+     * 根据索引删除指定元素
+     * @param position
+     */
+    removeAt(position) {
+      // 边界处理
+      if (position < 0 || position > this.length) return false
+
+      // 获取当前的节点
+      let current = this.header
+      // 记录索引
+      let index = 0
+      // 需要判断插入位置是不是第一个
+      if (position === 0) {
+        this.header = current.next
+      } else {
+        // 上一个
+        let previous = null
+        while (index++ < position) {
+          previous = current
+          current = current.next
+        }
+        previous.next = current.next
+      }
+      this.length--
+      return current
+    }
+
+    /**
+     * 根据相应数据删除对应链表节点
+     * @param data 需要删除的数据
+     */
+    remove(data){
+      const current = this.indexOf(data)
+      return this.removeAt(current)
+    }
+
+    /**
+     * 是否为空
+     * @returns {boolean}
+     */
+    isEmpty(){
+      return this.length === 0
+    }
+
+    /**
+     * 链表节点个数
+     * @returns {number|*}
+     */
+    size(){
+      return this.length
+    }
+  }
+
+  const list = new LinkedList()
+  list.append('1')
+  list.append('2')
+  list.append('3')
+  list.append('4')
+  console.log(list)
+  list.insert(1, 'B')
+  console.log(list)
+  console.log(list.get('1'))
+  console.log(list.indexOf('A'))
+  list.update(1, 'D')
+  console.log(list)
+  list.removeAt(1)
+  console.log(list)
+  // alert(list)
+</script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+  class Node {
+    constructor(key) {
+      this.key = key
+      this.right = null
+      this.left = null
+    }
+  }
+
+  class BinarySearchTree {
+    constructor() {
+      this.root = null
+    }
+
+    // 插入
+    insert(node) {
+      // 创建一个新的节点
+      let newNode = new Node(node)
+
+      // 判断二叉树是否为空
+      if (this.root === null) {
+        this.root = newNode
+      } else { //说明存在根节点
+        this.insertCompare(this.root, newNode)
+      }
+    }
+
+    // 插入比较
+    insertCompare(oldNode, newNode) {
+      //判断跟节点两边是否有数据
+      if (newNode.key < oldNode.key) { //左边查询
+        if (oldNode.left === null) { //左节点为空
+          oldNode.left = newNode
+        } else { //左节点不为空
+          this.insertCompare(oldNode.left, newNode)
+        }
+      } else { // 右边查询
+        if (oldNode.right === null) { //右边节点为空
+          oldNode.right = newNode
+        } else {
+          this.insertCompare(oldNode.right, newNode)
+        }
+      }
+    }
+
+    // 先序遍历 根结点 ---> 左子树 ---> 右子树
+    preOrderTraversal() {
+      this.preOrderTraversalNode(this.root)
+    }
+
+    preOrderTraversalNode(node) {
+      if (node !== null) {
+
+        console.log(node.key)
+        this.preOrderTraversalNode(node.left)
+        this.preOrderTraversalNode(node.right)
+      }
+    }
+
+    // 中序遍历 左子树---> 根结点 ---> 右子树
+    midOrderTraversal() {
+      this.midOrderTraversalNode(this.root)
+    }
+
+    midOrderTraversalNode(node) {
+      if (node !== null) {
+        this.midOrderTraversalNode(node.left)
+        console.log(node.key)
+        this.midOrderTraversalNode(node.right)
+      }
+    }
+
+    // 后续遍历 左子树 ---> 右子树 ---> 根结点
+    postOrderTraversal() {
+      this.postOrderTraversalNode(this.root)
+    }
+
+    postOrderTraversalNode(node) {
+      if (node !== null) {
+        this.postOrderTraversalNode(node.left)
+        this.postOrderTraversalNode(node.right)
+        console.log(node.key)
+      }
+    }
+
+    // 最大值
+    max() {
+      // 获取根节点
+      let node = this.root
+      // 判断右边是否有节点
+      while (node.right !== null) {
+        node = node.right
+      }
+      return node.key
+    }
+
+    // 最小值
+    min() {
+      let node = this.root
+      while (node.left !== null) {
+        node = node.left
+      }
+      return node.key
+    }
+
+    // 搜索
+    search(key) {
+      let node = this.root
+      while (node !== null) { // 节点不为null就一直循环
+        if (node.key > key) { // 传入的值小
+          node = node.left
+        } else if (node.key < key) { // 传入的值大
+          node = node.right
+        } else {
+          return true
+        }
+      }
+      return false
+    }
+
+    // 删除操作
+    remove(key) {
+      // 定义属性
+      // 获取当前值
+      let current = this.root
+      // 技术当前值的父节点
+      let parent = null
+      // 判断是左子节点还是右子节点
+      let leftChild = true
+
+      // 寻找节点 不等于输入的值就一直循环
+      while (current.key !== key) {
+        parent = current
+        if (current.key > key) {
+          leftChild = true
+          current = current.left
+        } else {
+          leftChild = false
+          current = current.right
+        }
+        if (current === null) return false
+      }
+
+      // 删除节点判断
+      // 删除的是叶子节点 即 left 和 right 为null
+      if (current.left === null && current.right === null) {
+        if (current === this.root) {
+          // 说明删除的是根节点
+          this.root = null
+        } else if (leftChild) {
+          // 删除的不是根节点是 下面的叶子节点
+          parent.left = null
+        } else {
+          parent.right = null
+        }
+      } else if (current.right === null) {
+        if (current === this.root) {
+          this.root = current.left
+        } else if (leftChild) {
+          parent.left = current.left
+        } else {
+          parent.left = current.right
+        }
+      } else if (current.left === null) {
+        if (current === this.root) {
+          this.root = current.right
+        } else if (leftChild) {
+          parent.left = current.right
+        } else {
+          parent.right = current.right
+        }
+      }
+      else{
+        // 获取后继节点
+        let  successor = this.getSuccess(current)
+
+        // 判断是不是跟节点
+        if(this.root === current){
+          this.root = successor
+        }else if(leftChild){
+           parent.left = successor
+        }else{
+          parent.right = successor
+        }
+        successor.left = current.left
+      }
+
+      return true
+
+      // 删除的节点只有一个子节点
+      // if (current.left !== null || current.right !== null) {
+      //   if (current === this.root) {
+      //     this.root = null
+      //     if(current.left === null){
+      //       this.root = current.right
+      //     }else{
+      //       this.root = current.left
+      //     }
+      //   } else if (leftChild) {
+      //     if (current.left === null) {
+      //       parent.left = current.right
+      //     } else { // 将当前值的节点给 父节点直连
+      //       parent.left = current.left
+      //     }
+      //   } else {
+      //     if (current.right === null) {
+      //       parent.right = current.left
+      //     } else { // 将当前值的节点给 父节点直连
+      //       parent.right = current.right
+      //     }
+      //   }
+      // }
+
+      // 删除的节点有两个子节点
+      // if (current.left !== null && current.right !== null) {
+      //   if (current === this.root) {
+      //     this.root = null
+      //   } else if (leftChild) {
+      //     parent.left = current.left
+      //     current.left.right = current.right
+      //   } else {
+      //     parent.right = current.right
+      //     current.right.left = current.left
+      //   }
+      // }
+    }
+
+    getSuccess(delNode){
+      // 存临时节点
+      let successParent =  delNode
+      let success = delNode
+      let current = delNode.right
+
+      // 寻找节点
+      while (current !== null){
+        successParent = success
+        success = current
+        current = current.left
+      }
+
+      console.log(success)
+      debugger
+      // 如果找到的节点不是右节点
+      if(success !== delNode.right){
+        successParent.left = success.right
+        success.right = delNode.right
+      }
+
+      return success
+    }
+  }
+
+  const x = new BinarySearchTree()
+  x.insert(9)
+  x.insert(5)
+  x.insert(12)
+  x.insert(11)
+  x.insert(14)
+  x.insert(7)
+  x.insert(8)
+  x.insert(6)
+  x.insert(4)
+  x.insert(13)
+  x.insert(16)
+  x.insert(15)
+  console.log(x)
+  // x.pederTraversal()
+  // x.midOrderTraversal()
+  // x.postOrderTraversal()
+  // console.log(x.max(), '最大值')
+  // console.log(x.min(), '最小值')
+  // console.log(x.search(7))
+  // console.log(x.search(1))
+
+  x.remove(5)
+  console.log(x)
+  x.midOrderTraversal()
+
+
+  // function toFiveOut (num){
+  //   let x = []
+  //   while (num >= 0){
+  //     num--
+  //     if(num % 5 === 0){
+  //       continue
+  //     }
+  //     x.push(num)
+  //   }
+  //   return x
+  // }
+  //
+  // console.log(toFiveOut(1000))
+</script>
+</body>
+</html>

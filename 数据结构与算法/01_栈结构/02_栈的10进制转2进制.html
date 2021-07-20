@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script>
+  function dec(num) {
+    let result = []
+    while (num >= 1) {
+      console.log(num % 2)
+      const x = num % 2
+      num = Math.floor(num / 2)
+      result.push(x)
+    }
+    console.log(result, '----')
+    return result.reverse().join('')
+  }
+  console.log(dec(100))
+</script>
+</body>
+</html>

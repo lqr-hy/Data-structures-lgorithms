@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>双向链表</title>
+</head>
+<body>
+<script>
+  class DoublyNode {
+    constructor(data) {
+      this.data = data
+      this.prev = null
+      this.next = null
+    }
+  }
+
+  class DoublyLinkedList {
+    constructor() {
+      this.header = null
+      this.tail = null
+      this.length = 0
+    }
+
+    /**
+     * 添加数据
+     * @param data 需要添加的数据
+     */
+    append(data) {
+      const newNode = new DoublyNode(data)
+      if (this.header === null) {
+        this.header = newNode
+        this.tail = newNode
+      } else {
+        // 最后一个next 指向新节点
+        this.tail.next = newNode
+        // 新节点的上一个指向之前的最后一个
+        newNode.prev = this.tail
+        // 新节点变成最后一个
+        this.tail = newNode
+      }
+      this.length++
+    }
+
+    toString() {
+      let current = this.header
+      let result = ''
+      while (current) {
+        result += current.data + ' '
+        current = current.next
+      }
+      return result
+    }
+
+    /**
+     * 从前往后查
+     * @returns {string}
+     */
+    forwardToString() {
+      let current = this.header
+      let result = ''
+      while (current) {
+        result += current.data + ' '
+        current = current.next
+      }
+      return result
+    }
+
+    /**
+     * 从后往前查
+     * @returns {string}
+     */
+    backwardToString() {
+      return this.toString()
+    }
+
+    /**
+     * 插入数据
+     * @param position 需要插入的位置
+     * @param data 需要插入的数据
+     * @returns {boolean}
+     */
+    insert(position, data) {
+      // 边界处理
+      if (position < 0 || position > this.length) return false
+
+      const newNode = new DoublyNode(data)
+      let current = this.header
+      // 当插入位置是零的时候
+      if (position === 0) {
+        current.prev = newNode
+        newNode.next = current
+        this.header = newNode
+      } else if (position === this.length) { // 位置是最后一项
+        this.tail.next = newNode
+        newNode.prev = this.tail
+        this.tail = newNode
+      } else {
+        // let previous = null
+        let index = 0
+        while (index++ < position) {
+          // previous = current
+          current = current.next
+        }
+        // // 当是插入最后一项
+        // if(index === this.length){
+        //   this.tail = newNode
+        //   newNode.prev = previous
+        //   previous.next = newNode
+        // }else{ // 否者就不是头和尾
+        //   newNode.prev = previous
+        //   previous.next = newNode
+        //   newNode.next = current
+        //   current.prev = newNode
+        // }
+
+        newNode.next = current
+        newNode.prev = current.prev
+        current.prev.next = newNode
+        current.prev = newNode
+      }
+      this.length++
+    }
+
+    /**
+     * 根据索引查索引数据
+     * @param position 需要查的索引
+     */
+    get(position) {
+      if (position < 0 || position >= this.length) return null
+      // 获取当前节点
+      let current = this.header
+      // 记录当前节点索引
+      let index = 0
+      while (index++ < position) {
+        current = current.next
+      }
+      return current.data
+    }
+
+    /**
+     * 查看节点是否在链表中
+     * @param data 需要查询的数据
+     */
+    indexOf(data) {
+      // 获取当前节点
+      let current = this.header
+      // 记录索引
+      let index = 0
+      while (current) {
+        if (current.data === data) {
+          return index
+        }
+        current = current.next
+        index++
+      }
+      return -1
+    }
+
+    // 是否为空
+    isEmpty() {
+      return this.length === 0
+    }
+
+    /**
+     * 长度
+     * @returns {number}
+     */
+    size() {
+      return this.length
+    }
+
+    /**
+     * 更新链表数据
+     * @param position 需要更新的位置
+     * @param data 更新的数据
+     */
+    update(position, data) {
+      if (position < 0 || position >= this.length) return null
+      let current = this.header
+      let index = 0
+      while (index++ < position) {
+        current = current.next
+      }
+      current.data = data
+      return true
+    }
+
+    /**
+     * 根据索引删除某一项节点
+     * @param position 需要删除的索引
+     */
+    removeAt(position) {
+      if (position < 0 || position > this.length) return false
+      let current = this.header
+      let index = 0
+      // 判断链表数据是不是只有一个节点
+      if(this.length === 1){
+        this.header = null
+        this.tail = null
+      } else{
+        if (position === 0) { // 删除的是第一项
+          this.header.next.prev = null
+          this.header = this.header.next
+        } else if (position === this.length - 1) { // 删除的是最后一项
+          this.tail.prev.next = null
+          this.tail = this.tail.prev
+        } else {
+          while (index++ < position) {
+            current = current.next
+          }
+          current.prev.next = current.next
+          current.next.prev = current.prev
+        }
+      }
+      this.length -= 1
+      return current
+    }
+
+    /**
+     * 根据数据删除指定的项
+     * @param data
+     */
+    remove(data){
+      const index = this.indexOf(data)
+      return this.removeAt(index)
+    }
+
+    /**
+     * 获取第一个数据
+     * @returns {*}
+     */
+    getFirst(){
+      return this.header.data
+    }
+
+    /**
+     * 获取最后一个节点数据
+     * @returns {*}
+     */
+    getLast(){
+      return this.tail.data
+    }
+  }
+
+  const list = new DoublyLinkedList()
+  list.append('1')
+  list.append('2')
+  list.append('3')
+  list.append('4')
+  list.append('1')
+  // console.log(list)
+  // alert(list)
+  console.log(list.backwardToString())
+  console.log(list.forwardToString())
+  list.insert(1, 'A')
+  // console.log(list)
+  // alert(list)
+  console.log(list.get(1), list.get(0), list.get(5))
+  console.log(list.indexOf('A'), list.indexOf('1'), list.indexOf('4'))
+  console.log(list.isEmpty(), list.size())
+  list.update(4, 'B')
+  list.removeAt(4)
+  alert(list)
+  // console.log(list.indexOf('1'))
+  list.remove('1')
+  alert(list)
+  // console.log(list.removeAt(1),list)
+  // alert(list)
+  console.log(list.getFirst(), list.getLast())
+</script>
+</body>
+</html>

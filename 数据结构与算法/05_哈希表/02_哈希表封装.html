@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>哈希表封装</title>
+</head>
+<body>
+<script>
+  class HashTable {
+    constructor() {
+      this.storage = []
+      this.count = 0
+      this.limit = 7
+    }
+
+    // 哈希函数
+    hashFunc(str, size) {
+      //  定义hashcode变量
+      let hashcode = 0
+
+      //  霍纳算法 计算哈希值
+      for (let i = 0; i < str.length; i++) {
+        //  选择的一个质数
+        hashcode = 37 * hashcode + str.charCodeAt(i)
+      }
+
+      // 取余操作
+      hashcode = hashcode % size
+
+      return hashcode
+    }
+
+    // 添加和修改
+    put(key, value) {
+      // 根据key 获取对应的 index
+      let index = this.hashFunc(key, this.limit)
+
+      // 根据index 拿出对应的链式地址
+      let bucket = this.storage[index]
+
+      // 判断之前是否有bucket
+      if (bucket === undefined) {
+        bucket = []
+        this.storage[index] = bucket
+      }
+
+      // 如果传入的key 之前存在，就是修改
+      for (let i = 0; i < bucket.length; i++) {
+        let tuple = bucket[i]
+        // 拿出bucket 里面的key
+        if (tuple[0] === key) {
+          // 就修改值
+          tuple[1] = value
+          return
+        }
+      }
+
+      // 如果不是修改，那就追加数据
+      bucket.push([key, value])
+
+      // 数量加1
+      this.count++
+      // 是否扩容
+      if (this.count > this.limit * 0.75) {
+        let prime = this.getPrime(this.limit * 2)
+        this.resize(prime)
+      }
+    }
+
+    // 获取值
+    get(key) {
+      // 根据key 获取对应的index
+      let index = this.hashFunc(key, this.limit)
+
+      // 根据index 获取对应的bucket
+      let bucket = this.storage[index]
+
+      // 判断bucket 是否存在
+      if (bucket === undefined) {
+        return null
+      }
+      // 如果存在
+      for (let i = 0; i < bucket.length; i++) {
+        let tuple = bucket[i]
+        if (tuple[0] === key) {
+          return tuple[1]
+        }
+      }
+    }
+
+    // 删除某个值
+    remove(key) {
+      // 获取指定的index
+      let index = this.hashFunc(key, this.limit)
+      // 获取bucket
+      let bucket = this.storage[index]
+      // 判断bucket 存不存在
+      if (bucket === undefined) return null
+
+      // 遍历bucket里面的值
+      for (let i = 0; i < bucket.length; i++) {
+        let tuple = bucket[i]
+        if (tuple[0] === key) {
+          bucket.splice(i, 1)
+          this.count--
+          // 是否缩容
+          if (this.limit > 7 && this.count < this.limit * 0.75) {
+            let prime = this.getPrime(Math.floor(this.limit / 2))
+            this.resize(prime)
+          }
+          return tuple[1]
+        }
+      }
+
+      return null
+    }
+
+    // 判断是否为空
+    isEmpty() {
+      return this.count === 0
+    }
+
+    // size
+    size() {
+      return this.count
+    }
+
+    // 扩容或者所容
+    resize(newLimit) {
+      // 获取旧的storage数据
+      let oldStorage = this.storage
+
+      // 重新定义数据
+      this.storage = []
+      this.count = 0
+      this.limit = newLimit
+
+      // 遍历旧的bucket数据
+      oldStorage.forEach((bucket) => {
+        if (bucket === null) {
+          return
+        }
+        // 从新添加数据
+        for (let i = 0; i < bucket.length; i++) {
+          let tuple = bucket[i]
+          this.put(tuple[0], tuple[1])
+        }
+      })
+    }
+
+    //  判断是不是质数
+    isPrime(num) {
+      // let x = parseInt(Math.sqrt(num))
+      for (let i = 2; i <= Math.sqrt(num); i++) {
+        if (num % i === 0) {
+          return false
+        }
+      }
+      return true
+    }
+
+    // 获取质数
+    getPrime(num){
+      while (!this.isPrime(num)){
+        num++
+      }
+      return num
+    }
+  }
+
+  const ht = new HashTable()
+  ht.put('a', '1')
+  ht.put('b', '2')
+  ht.put('c', '3')
+  ht.put('d', '4')
+  console.log(ht)
+
+  ht.put('a', '5')
+  console.log(ht)
+
+  ht.put('e', '6')
+  ht.put('y', '60')
+  console.log(ht)
+  ht.remove('a')
+  ht.remove('y')
+  console.log(ht)
+</script>
+</body>
+</html>

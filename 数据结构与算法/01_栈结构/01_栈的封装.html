@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script>
+  // FILO first in last out  先进后出  压栈 -> 弹栈
+
+  function Stack() {
+    this.items = []
+    // 入栈
+    Stack.prototype.push = (elements) => {
+      this.items.push(elements)
+    }
+    // 出栈
+    Stack.prototype.pop = () => {
+      return this.items.pop()
+    }
+    // 查看栈顶
+    Stack.prototype.peek = () => {
+      return this.items[this.items.length - 1]
+    }
+    // 栈是否为空
+    Stack.prototype.isEmpty = () => {
+      return this.items.length === 0
+    }
+    // 获取栈中数据个数
+    Stack.prototype.size = () => {
+      return this.items.length
+    }
+    // toString()方法
+    Stack.prototype.toString = () => {
+      let result = ''
+      for(let i = 0; i < this.items.length; i++){
+        result += this.items[i] + ' '
+      }
+      return result
+    }
+  }
+
+  // const s = new Stack()
+  //
+  // s.push(1)
+  // s.push(2)
+  // s.push(3)
+  //
+  // console.log(s.size())
+  // s.pop()
+  // console.log(s.peek())
+  // console.log(s.toString())
+  // s.pop()
+  // s.pop()
+  // console.log(s.isEmpty())
+
+  // 通过栈 实现 10 -》2进制
+  function decTobin (num){
+    // new 一个栈空间
+    const x = new Stack()
+    while (num > 0){
+      x.push(num % 2)
+      num = Math.floor(num / 2)
+    }
+
+    let result = ''
+    while (!x.isEmpty()){
+      result += x.pop()
+    }
+    return result
+  }
+
+  console.log(decTobin(100))
+</script>
+</body>
+</html>

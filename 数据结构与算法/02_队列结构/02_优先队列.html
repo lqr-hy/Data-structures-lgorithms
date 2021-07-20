@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>优先队列</title>
+</head>
+<body>
+<script>
+  function PriorityQueue() {
+    // 创建一个内部类 保存传入的变量
+    function PriorityElement(element, priority) {
+      this.element = element
+      this.priority = priority
+    }
+
+    // 属性
+    this.items = []
+
+    // 实现插入的方法
+    PriorityQueue.prototype.enqueue = (element, priority) => {
+      // 创建QueueElement对象
+      const queueElement = new PriorityElement(element, priority)
+
+      // 判断队列中是否有数据
+      if (this.items.length === 0) {
+        // 没有数据就往里面添加
+        this.items.push(queueElement)
+      } else {
+        // 有数据就遍历比较
+        // 判断表示是否添加
+        let add = false
+        for (let i = 0; i < this.items.length; i++) {
+          if (queueElement.priority < this.items[i].priority) {
+            // 插入到当前对象前面
+            this.items.splice(i, 0, queueElement)
+            add = true
+            return
+          }
+            // 如果没有就添加到最后
+        }
+        if(!add){
+          this.items.push(queueElement)
+        }
+      }
+    }
+    // 删除队列
+    PriorityQueue.prototype.dequeue = () => {
+      return this.items.shift()
+    }
+    // 返回队列最先添加的
+    PriorityQueue.prototype.front = () => {
+      return this.items[0]
+    }
+    // 队列是否为空
+    PriorityQueue.prototype.isEmpty = () => {
+      return this.items.length === 0
+    }
+    // 队列中的个数
+    PriorityQueue.prototype.size = () => {
+      return this.items.length
+    }
+    // 将队列转string
+    PriorityQueue.prototype.toString = () => {
+      let result = ''
+      for (let i = 0; i < this.items.length; i++) {
+        result += this.items[i].element + ' - ' + this.items[i].priority + '  '
+      }
+      return result
+    }
+  }
+
+  const pq = new PriorityQueue()
+  pq.enqueue('c', 3)
+  pq.enqueue('d', 4)
+  pq.enqueue('a', 1)
+  pq.enqueue('b', 2)
+  console.log(pq)
+</script>
+</body>
+</html>

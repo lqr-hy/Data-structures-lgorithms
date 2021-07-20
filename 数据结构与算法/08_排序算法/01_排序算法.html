@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>排序</title>
+</head>
+<body>
+<script>
+  class ArrayList {
+    constructor() {
+      this.array = []
+    }
+
+    // 插入
+    insert(v) {
+      this.array.push(v)
+    }
+
+    // toString方法
+    toString() {
+      return this.array.join('-')
+    }
+
+    // 冒泡排序 复杂度 O(N^2)
+    bubbleSort() {
+      // for (let i = 0; i < this.array.length - 1; i++) { // 控制比较的轮数
+      //   for (let j = 0; j < this.array.length - 1 - i; j++) { // 控制比较的次数
+      //     if (this.array[j] > this.array[j + 1]) {
+      //       [this.array[j], this.array[j + 1]] = [this.array[j + 1], this.array[j]]
+      //     }
+      //   }
+      // }
+
+      // 方法二
+      console.time('bubbleSort')
+      for (let i = this.array.length - 1; i >= 0; i--) {
+        for (let j = 0; j < i; j++) {
+          if (this.array[j] > this.array[j + 1]) {
+            [this.array[j], this.array[j + 1]] = [this.array[j + 1], this.array[j]]
+          }
+        }
+      }
+      console.timeEnd('bubbleSort')
+    }
+
+    // 选择排序 复杂度 O(N)
+    selectionSort() {
+      let length = this.array.length
+
+      // 外层循环控制次数 从0位置开始取数据
+      for (let i = 0; i < length - 1; i++) {
+        // 假设开始0位置最小
+        let min = i
+        // 内循环选择最小值 向后比较
+        for (let j = min + 1; j < length; j++) {
+          if (this.array[j] < this.array[min]) {
+            min = j
+          }
+        }
+        [this.array[i], this.array[min]] = [this.array[min], this.array[i]]
+      }
+    }
+
+
+    // 插入排序 比选择和冒泡更快 选择一个假设值进行插入排序
+    insertionSort() {
+      let length = this.array.length
+      // 外层循环控制插入的数据， 从1开始向前插入
+      console.time('insertionSort')
+      for (let i = 1; i < length; i++) {
+        // 内循环控制比较的次数
+        let temp = this.array[i]
+        // 获取i 的下标负值给J
+        let j = i
+        while (this.array[j - 1] > temp && j > 0) {
+          this.array[j] = this.array[j - 1]
+          j--
+        }
+        // 选出j位置的数据放置temp 说明找到了最小的位置
+        this.array[j] = temp
+      }
+      console.timeEnd('insertionSort')
+    }
+
+
+    // 希尔排序  通过分组比较进行插入排序
+    shellSort() {
+      // 获取数组长度
+      let length = this.array.length
+
+      // 设置gap间隔
+      let gap = Math.floor(length / 2)
+
+      // 循环遍历当gap 等于1时说明时最小的
+      console.time('shellSort')
+      while (gap >= 1) {
+        // 获取比较次数 以gap为界进行分组
+        for (let i = gap; i < length; i++) {
+          let temp = this.array[i]
+          let j = i
+          while (this.array[j - gap] > temp && j > gap - 1) {
+            this.array[j] = this.array[j - gap]
+            j--
+          }
+          this.array[j] = temp
+        }
+        gap = Math.floor(gap / 2)
+      }
+      console.timeEnd('shellSort')
+    }
+
+    // 快速排序 分而治之 快速排序其实就是找到一个中间值，然后将数分为两部分，将这个两部分分出来了在进行内部排序
+    // 首先找到枢纽
+    median(left, right) {
+      // 找到中间的位置
+      let center = Math.floor((left + right) / 2)
+
+      // 判断大小进行交换
+      if (this.array[left] > this.array[center]) {
+        [this.array[center], this.array[left]] = [this.array[left], this.array[center]]
+      }
+
+      if (this.array[left] > this.array[right]) {
+        [this.array[left], this.array[right]] = [this.array[right], this.array[left]]
+      }
+
+      if (this.array[center] > this.array[right]) {
+        [this.array[center], this.array[right]] = [this.array[right], this.array[center]]
+      }
+
+
+
+      // 将center 的位置换到length -1
+      [this.array[center], this.array[right - 1]] = [this.array[right - 1], this.array[center]]
+      return this.array[right - 1]
+    }
+
+
+    // 快速排序
+    quickSort() {
+      this.quick(0, this.array.length - 1)
+    }
+
+    quick(left, right) {
+      // 结束条件
+      if (left >= right) return true
+
+      // 获取数据
+      let pivot = this.median(left, right)
+
+      // 定义变量记录当前位置
+      let i = left
+      let j = (right - 1)
+      while (i < j) {
+        // 找到小于就停止
+        while (this.array[++i] < pivot) {
+        }
+        // 找到大于就停止
+        while (this.array[--j] > pivot) {
+        }
+
+        if (i < j) {
+          [this.array[i], this.array[j]] = [this.array[j], this.array[i]]
+        } else {
+          break
+        }
+      }
+
+      // 将枢纽放置争取位置
+      [this.array[i], this.array[right - 1]] = [this.array[right - 1], this.array[i]]
+
+      // 递归
+      this.quick(left, i - 1)
+      this.quick(i + 1, right)
+    }
+  }
+
+  const arr = new ArrayList()
+  arr.insert(34)
+  arr.insert(12)
+  arr.insert(44)
+  arr.insert(66)
+  arr.insert(63)
+  arr.insert(100)
+  arr.insert(1)
+  arr.insert(66)
+  arr.insert(2)
+  console.log(arr)
+
+  // 冒泡
+  // arr.bubbleSort()
+
+  alert(arr)
+
+  // arr.selectionSort()
+
+  // arr.insertionSort()
+
+  // arr.shellSort()
+
+  arr.quickSort()
+  alert(arr)
+
+</script>
+</body>
+</html>
